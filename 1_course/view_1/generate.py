@@ -2,17 +2,26 @@ import argparse
 import random
 
 
-def Read_Model(path):  # восстановили словарь
+# считывание пар слов
+# подсчет их количства
+# возвращаем словарь вида
+# (<слово1>,<слово2>) <количество вхождений>
+def read_model(path):  # восстановили словарь
     pairs = {}
-    f = open(path, 'r')
-    for i in f:
-        s = i.split('=')
-        pairs[((s[0].split())[0], (s[0].split())[1])] = int(s[1][:2])
-    f.close()
-    return pairs
+    with open(path, 'r') as f:
+        for i in f:
+            s = i.split()  # полчучаем пару
+            if (s[0], s[1]) in pairs:  # если уже есть, то увеличиваем счетчик
+                pairs[s[0], s[1]] += 1
+            else:
+                pairs[s[0], s[1]] = 1  # если нет, то добавляем
+
+    return pairs  # возвращаем словарь
 
 
-def Build_Sentence(pairs, seed):
+# получаем словарь и начальное слово
+# возвразаем итоговое предложение
+def build_sentence(pairs, seed):
     result = ''
     for i in range(int(args.length)):  # идем по всем парам
         result += seed + ' '  # записываем наше слово
@@ -26,10 +35,9 @@ def Build_Sentence(pairs, seed):
     return result
 
 
-def Write_Result(path, result):
-    w = open(path, 'w')
-    w.write(result)
-    w.close()
+def write_result(path, result):
+    with open(path, 'w') as w:
+        w.write(result)
 
 
 if __name__ == '__main__':
@@ -41,20 +49,20 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # аргументы
 
-    pairs = Read_Model(args.model)
+    pairs = read_model(args.model)
 
     seed = ''
     keys = pairs.keys()  # выбираем слово с которого начнем посторение
-    if args.seed != None:
+    if args.seed is not None:
         seed = args.seed
     else:
         for i in pairs:  # вытаскмваем первый ключ
             seed = i[0]
             break
 
-    result = Build_Sentence(pairs, seed)
+    result = build_sentence(pairs, seed)
 
-    if args.output != None:
-        Write_Result(args.output, result)
+    if args.output is not None:
+        write_result(args.output, result)
     else:
         print(result)

@@ -3,37 +3,24 @@ import re
 import fileinput
 
 
-def Read(path, low_case):  # чтение файла, и возвращаем лист всех слов(с повторениями)
-    words = []  # сам список слов
+# создание модели
+# в модели храниятся пары слов
+# пары могут дублироватья
+# подсчет количества вхождений пар в "genereate"
+def make_model(in_path, low_case, out_path):
+    with open(in_path, 'r') as rd, open(out_path, 'w') as wr:
+        for line in rd:  # читаем из файла
+            line = line.strip()  # убрали пробелы сначала и с конца
+            reg = re.compile('[^a-zA-Zа-яА-Я ]')  # очистили от неалфавитных
+            line = reg.sub('', line)  # и тут тоже
+            if low_case == 1:  # приводим  к lowercase, если надо
+                line = line.lower()
 
-    f = open(path, 'r')
-    for line in f:
-        line = line.strip()  # убрали пробелы сначала и с конца
-        reg = re.compile('[^a-zA-Zа-яА-Я ]')  # очистили от неалфавитных
-        line = reg.sub('', line)  # и тут тоже
-        if low_case == 1:  # приводим  к lowercase, если надо
-            line = line.lower()
+            words = line.split()  # множество пар
+            # прочитали из файла
 
-        words += line.split()
-    f.close()
-    return words
-
-
-def Count_Pairs(words): #подсчет количства пар, запись в словарь
-    count_pairs = {}    # словарь пар, ключ - пара, значение - количество вхождений
-    for i in range(len(words) - 1):     # идем по всем словам , кроме поледнего, тк у него нет пары
-        if (words[i], words[i + 1]) in count_pairs:   # если пара есть, то увеличиваем счетчик
-            count_pairs[(words[i], words[i + 1])] += 1
-        else: # елси пары нет, то добавляем
-            count_pairs[(words[i], words[i + 1])] = 1
-    return count_pairs
-
-
-def Write(path, count_pairs):    #запись модели
-    w = open(path, 'w')
-    for i in count_pairs:        # первое слово пары, второе , и количетво пар
-        w.write(i[0] + ' ' + i[1] + '=' + str(count_pairs[i]) + '\n')
-    w.close()
+            for i in range(len(words) - 1):  # идем по всем словам , кроме поледнего, тк у него нет пары
+                wr.write(words[i] + ' ' + words[i + 1] + '\n')  # записавыем пары слов
 
 
 if __name__ == '__main__':
@@ -44,11 +31,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # аргументы
 
-    if args.input != None:
-        words = Read(args.input, args.lc)
+    if args.input is not None:
+        words = make_model(args.input, args.lc, args.model)
     else:
-        words = Read(fileinput.input(), args.lc)
-
-    count_pairs = Count_Pairs(words)
-
-    Write(args.model, count_pairs)
+        words = make_model(fileinput.input(), args.lc, args.model)
