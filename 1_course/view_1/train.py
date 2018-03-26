@@ -1,6 +1,6 @@
 import argparse
 import re
-import fileinput
+import fileinput  # это зачем
 
 
 # создание модели
@@ -10,9 +10,10 @@ import fileinput
 def make_model(in_path, low_case, out_path):  
     with open(in_path, 'r') as rd, open(out_path, 'w') as wr:
         for line in rd:  # читаем из файла
-            line = line.strip()  # убрали пробелы сначала и с конца
+            line = line.strip()  # убрали пробелы сначала и с конца  #  это не нужно, split() их уберет
             reg = re.compile('[^a-zA-Zа-яА-Я ]')  # очистили от неалфавитных 
             line = reg.sub('', line)  # и тут тоже
+            # line = re.sub('[^a-zA-Zа-яА-Я ]+', '', line) в одну строчку
             if low_case == 1:  # приводим  к lowercase, если надо
                 line = line.lower()
 
@@ -21,6 +22,8 @@ def make_model(in_path, low_case, out_path):
 
             for i in range(len(words) - 1):  # идем по всем словам , кроме поледнего, тк у него нет пары
                 wr.write(words[i] + ' ' + words[i + 1] + '\n')  # записавыем пары слов
+                
+                # а последнее куда дел? его тоже надо сохранить
 
 
 if __name__ == '__main__':
