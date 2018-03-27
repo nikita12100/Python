@@ -1,5 +1,6 @@
 import argparse
 import random
+import os
 
 
 # считывание пар слов
@@ -11,10 +12,7 @@ def read_model(path):  # восстановили словарь
     with open(path, 'r') as f:
         for line in f:
             s = line.split()  # полчучаем пару
-            if (s[0], s[1]) in pairs:  # если уже есть, то увеличиваем счетчик
-                pairs[s[0], s[1]] += 1
-            else:
-                pairs[s[0], s[1]] = 1  # если нет, то добавляем
+            pairs[s[0], s[1]] = int(s[2])  # если нет, то добавляем
 
     return pairs  # возвращаем словарь
 
@@ -48,7 +46,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # аргументы
 
-    pairs = read_model(args.model + 'model.txt')
+    pairs = read_model(os.path.join(args.model, 'model.txt'))
 
     seed = ''
     if args.seed is not None:
