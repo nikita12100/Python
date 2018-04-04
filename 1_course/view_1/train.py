@@ -6,7 +6,7 @@ import collections
 
 
 # запись модели в файл
-def write_model(out_path, count):
+def write_model(out_path, count):  # давай использовать pickle здесь
     with open(os.path.join(out_path, 'model.txt'), 'a') as wr:
         for i in set(count.elements()):
             wr.write(i[0] + ' ' + i[1] + ' ' + str(count[i]) + '\n')
@@ -17,7 +17,8 @@ def write_model(out_path, count):
 # подсчет количества вхождений пар в "genereate"
 def make_model(in_path, low_case, out_path, c):
     if args.input is not None:
-        f = open(os.path.join(args.input, 'input.txt'), 'r')
+        f = open(os.path.join(args.input, 'input.txt'), 'r')  # почему название файла только input.txt? надо чтобы все читал
+        # срочно это исправляй, даю два дня
     else:
         f = sys.stdin
 
@@ -50,5 +51,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # аргументы
 
-    c = collections.Counter()
+    c = collections.Counter()  # однобуквенные названия переменных НЕЛЬЗЯ
     make_model(args.input, args.lc, args.model, c)
