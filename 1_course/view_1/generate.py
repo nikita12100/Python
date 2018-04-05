@@ -9,19 +9,22 @@ import os
 # (<слово1>,<слово2>) <количество вхождений>
 def read_model(path):  # восстановили словарь
     pairs = {}
-    with open(path, 'r') as f:
-        for line in f:
-            s = line.split()  # полчучаем пару
-            pairs[s[0], s[1]] = int(s[2])  # если нет, то добавляем
-
+    try:
+        with open(path, 'r') as f:
+            for line in f:
+                source = line.split()  # полчучаем пару
+                pairs[source[0], source[1]] = int(source[2])  # если нет, то добавляем
+    except IOError as e:
+        print('Файл model.txt не найден.')
+        exit(0)
     return pairs  # возвращаем словарь
 
 
 # получаем словарь и начальное слово
 # возвразаем итоговое предложение
-def build_sentence(pairs, seed):
+def build_sentence(pairs, seed, length):
     result = ''
-    for i in range(int(args.length)):  # идем по всем парам
+    for i in range(length):  # идем по всем парам
         result += seed + ' '  # записываем наше слово
         frequency = []  # следующие слова за seed
         for words in pairs:
@@ -41,21 +44,30 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', help='Путь к файлу, из которого загружается модель. Имя модели должно быть "model.txt" !')
     parser.add_argument('--seed', help='Начальное слово.')
-    parser.add_argument('--length', help='Длина последовательности.')
+    parser.add_argument('--length', type=int, help='Длина последовательности.')
     parser.add_argument('--output', help='Файл, в который будет записан результат.')
     args = parser.parse_args()
     # аргументы
 
-    pairs = read_model(os.path.join(args.model, 'model.txt'))
+    # путь к модели
+    if args.model is not None:
+        pairs = read_model(os.path.join(args.model, 'model.txt'))
+    else: # елси путь не указан, то проверяем текущюю дирректорию
+        pairs = read_model(os.path.join(os.getcwd(), 'model.txt'))
 
+    # зерно
     seed = ''
     if args.seed is not None:
         seed = args.seed
     else:
         seed = random.choice(list(pairs))[0]
 
-    result = build_sentence(pairs, seed)
-
+    # длина
+    if args.length is not None:
+        result = build_sentence(pairs, seed, args.length)
+    else:
+        result = build_sentence(pairs, seed, 10) # по деф. длина 10
+    # вывод
     if args.output is not None:
         write_result(args.output, result)
     else:
