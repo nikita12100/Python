@@ -3,6 +3,7 @@ import re
 import sys
 import os
 import collections
+import pickle
 
 
 # запись модели в файл
@@ -19,7 +20,7 @@ def make_model(in_path, low_case, out_path, counter):
     if args.input is not None:
         f = open(in_path, 'r')
     else:
-        f = sys.stdin
+        f = os.getcwd()
 
     last = '_'  # соединяем последнее слово с первым
     for line in f:  # читаем из файла
@@ -38,9 +39,9 @@ def make_model(in_path, low_case, out_path, counter):
     if out_path is not None:
         write_model(out_path, counter)
     else:
-        write_model(os.getcwd(), counter) # записываем в текущюю директорию
-
-    f.close()
+        write_model(os.getcwd(), counter)  # записываем в текущюю директорию
+    if args.input is not None:
+        f.close()
 
 
 if __name__ == '__main__':
@@ -56,16 +57,15 @@ if __name__ == '__main__':
     counter = collections.Counter()
 
     # работа с директорий в которой лежит каталог
-    if args.input is not None: # если есть директория то перебираем все файлы в ней
+    if args.input is not None:  # если есть директория то перебираем все файлы в ней
         dir_files = [f.name for f in os.scandir(args.input) if f.is_file()]
         for file in dir_files:
             make_model(os.path.join(args.input, file), args.lc, args.model, counter)
         dir_folder = [f.name for f in os.scandir(args.input) if not f.is_file()]
-        if dir_folder :     # если есть вложенные папки
+        if dir_folder:  # если есть вложенные папки
             for folder in dir_folder:
                 foler_files = [f.name for f in os.scandir(os.path.join(args.input, folder)) if f.is_file()]
                 for file in foler_files:
                     make_model(os.path.join(args.input, folder, file), args.lc, args.model, counter)
     else:
         make_model(args.input, args.lc, args.model, counter)
-
