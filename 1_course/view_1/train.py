@@ -3,7 +3,6 @@ import re
 import sys
 import os
 import collections
-import pickle
 
 
 # запись модели в файл
@@ -20,7 +19,7 @@ def make_model(in_path, low_case, out_path, counter):
     if args.input is not None:
         f = open(in_path, 'r')
     else:
-        f = os.getcwd()
+        f = sys.stdin
 
     last = '_'  # соединяем последнее слово с первым
     for line in f:  # читаем из файла
@@ -40,8 +39,8 @@ def make_model(in_path, low_case, out_path, counter):
         write_model(out_path, counter)
     else:
         write_model(os.getcwd(), counter)  # записываем в текущюю директорию
-    if args.input is not None:
-        f.close()
+
+    f.close()
 
 
 if __name__ == '__main__':
