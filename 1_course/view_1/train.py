@@ -7,9 +7,10 @@ import collections
 
 # запись модели в файл
 def write_model(out_path, counter):
-    with open(os.path.join(out_path, 'model.txt'), 'a') as wr:
+    with open(out_path, 'a') as wr: # исправил
         for i in set(counter.elements()):
             wr.write((i[0] + ' ' + i[1] + ' ' + str(counter[i]) + '\n'))
+
 
 
 # создание модели
@@ -38,7 +39,7 @@ def make_model(in_path, low_case, out_path, counter):
     if out_path is not None:
         write_model(out_path, counter)
     else:
-        write_model(os.getcwd(), counter)  # записываем в текущюю директорию
+        write_model(os.path.join(os.getcwd(), 'model.txt'), counter)  # записываем в текущюю директорию
 
     f.close()
 
@@ -48,7 +49,7 @@ if __name__ == '__main__':
     parser.add_argument('--input',
                         help='Путь к директории, в которой лежит коллекция документов.')
     parser.add_argument('--model',
-                        help='Путь к файлу, в который сохраняется модель. По умолчанию название файла "model.txt".')
+                        help='Путь к файлу, в который сохраняется модель. Пример : C:\model.txt')
     parser.add_argument('--lc', action='store_true', help='Приводить ли текст к нижнему ригистру ? (0 - нет, 1 - да)')
     args = parser.parse_args()
     # аргументы
