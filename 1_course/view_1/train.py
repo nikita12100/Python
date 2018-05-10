@@ -3,13 +3,14 @@ import re
 import sys
 import os
 import collections
+import pickle
 
 
 # запись модели в файл
 def write_model(out_path, counter):
-    with open(out_path, 'a') as wr:  # исправил
+    with open(out_path, 'ab') as wr:  # исправил
         for i in set(counter.elements()):
-            wr.write((i[0] + ' ' + i[1] + ' ' + str(counter[i]) + '\n'))
+            pickle.dump((i[0] + ' ' + i[1] + ' ' + str(counter[i]) + '\n'), wr)
 
 
 # создание модели

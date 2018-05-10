@@ -1,6 +1,7 @@
 import argparse
 import random
 import os
+import pickle
 
 
 # считывание пар слов
@@ -10,12 +11,16 @@ import os
 def read_model(path):  # восстановили словарь
     pairs = {}
     try:
-        with open(path, 'r') as f:
-            for line in f:
-                source = line.split()  # полчучаем пару
-                pairs[source[0], source[1]] = int(source[2])  # если нет, то добавляем
+        with open(path, 'rb') as f:
+            while True:  # идем по всему файлу пока не конец
+                try:
+                    raw = pickle.load(f)
+                    source = raw.split()  # полчучаем пару
+                    pairs[source[0], source[1]] = int(source[2])  # если нет, то добавляем
+                except EOFError:  # конец файла
+                    break
     except IOError as e:
-        print('Файл model.txt не найден.')
+        print('Файл \"' + path + '\" не найден.')
         exit(0)
     return pairs  # возвращаем словарь
 
@@ -52,7 +57,7 @@ if __name__ == '__main__':
     # путь к модели
     if args.model is not None:
         pairs = read_model(args.model)
-    else: # елси путь не указан, то проверяем текущюю дирректорию
+    else:  # елси путь не указан, то проверяем текущюю дирректорию
         pairs = read_model(os.path.join(os.getcwd(), 'model.txt'))
 
     # зерно
@@ -66,7 +71,7 @@ if __name__ == '__main__':
     if args.length is not None:
         result = build_sentence(pairs, seed, args.length)
     else:
-        result = build_sentence(pairs, seed, 10) # по деф. длина 10
+        result = build_sentence(pairs, seed, 10)  # по деф. длина 10
     # вывод
     if args.output is not None:
         write_result(args.output, result)
