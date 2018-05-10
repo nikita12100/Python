@@ -42,7 +42,7 @@ def write_result(path, result):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', help='Путь к файлу, из которого загружается модель. Имя модели должно быть "model.txt" !')
+    parser.add_argument('--model', help='Путь к файлу, из которого загружается модель.')
     parser.add_argument('--seed', help='Начальное слово.')
     parser.add_argument('--length', type=int, help='Длина последовательности.')
     parser.add_argument('--output', help='Файл, в который будет записан результат.')
@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     # путь к модели
     if args.model is not None:
-        pairs = read_model(os.path.join(args.model, 'model.txt'))
+        pairs = read_model(args.model)
     else: # елси путь не указан, то проверяем текущюю дирректорию
         pairs = read_model(os.path.join(os.getcwd(), 'model.txt'))
 
