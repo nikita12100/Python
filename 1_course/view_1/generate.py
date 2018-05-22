@@ -11,13 +11,13 @@ import pickle
 def read_model(path):  # восстановили словарь
     pairs = {}
     try:
-        with open(path, 'rb') as f:
-            while True:  # идем по всему файлу пока не конец
+        with open(path, 'rb') as rawFile:
+            file = pickle.Unpickler(rawFile)
+            while True:     # идем по всему файлу пока не конец
                 try:
-                    raw = pickle.load(f)
-                    source = raw.split()  # полчучаем пару
-                    pairs[source[0], source[1]] = int(source[2])  # если нет, то добавляем
-                except EOFError:  # конец файла
+                    pair = file.load().split()      # полчучаем пару
+                    pairs[pair[0], pair[1]] = int(pair[2])      # если нет, то добавляем
+                except EOFError:
                     break
     except IOError as e:
         print('Файл \"' + path + '\" не найден.')
