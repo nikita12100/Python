@@ -12,13 +12,14 @@ def read_model(path):  # восстановили словарь
     pairs = {}
     try:
         with open(path, 'rb') as rawFile:
-            file = pickle.Unpickler(rawFile)
-            while True:     # идем по всему файлу пока не конец
-                try:
-                    pair = file.load().split()      # полчучаем пару
+            file = pickle.load(rawFile)
+            file = file.split(';')      #   разделяем пары
+            try:
+                for line in file:       #   идем по всем парам
+                    pair = line.split()  # полчучаем пару
                     pairs[pair[0], pair[1]] = int(pair[2])      # если нет, то добавляем
-                except EOFError:
-                    break
+            except IndexError:      #   последняя строка пустая
+                return pairs
     except IOError as e:
         print('Файл \"' + path + '\" не найден.')
         exit(0)
@@ -36,7 +37,10 @@ def build_sentence(pairs, seed, length):
             if words[0] == seed:  # нашли пару с seed-world[]
                 for k in range(pairs.get(words)):  # <значиние> раз добавляем в freq <слово2>
                     frequency.append(words[1])
-        seed = random.choice(frequency)  # выбираем следующее
+        try:
+            seed = random.choice(frequency)  # выбираем следующее
+        except IndexError:
+            seed = random.choice(list(pairs))[0]
     return result
 
 

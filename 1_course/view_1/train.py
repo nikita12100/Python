@@ -7,11 +7,9 @@ import pickle
 
 
 # запись модели в файл
-def write_model(out_path, counter):
-    with open(out_path, 'ab') as wr:  # исправил
-        for i in set(counter.elements()):
-            pickle.dump((i[0] + ' ' + i[1] + ' ' + str(counter[i]) + '\n'), wr)
-
+def write_model(out_path, model):
+    with open(out_path, 'wb') as f:  # исправил
+        pickle.dump(model, f)
 
 # создание модели
 # в модели храниятся пары слов, пары могут дублироватья
@@ -36,10 +34,14 @@ def make_model(in_path, low_case, out_path, counter):
         for i in range(len(words) - 1):  # идем по всем словам , кроме поледнего, тк у него нет пары
             counter[(words[i], words[i + 1])] += 1  # считаем повторения пар
 
+    model = ''  # итоговая модель
+    for i in set(counter):
+        model += (i[0] + ' ' + i[1] + ' ' + str(counter[i]) + ';')
+
     if out_path is not None:
-        write_model(out_path, counter)
+        write_model(out_path, model)
     else:
-        write_model(os.path.join(os.getcwd(), 'model.txt'), counter)  # записываем в текущюю директорию
+        write_model(os.path.join(os.getcwd(), 'model.txt'), model)  # записываем в текущюю директорию
 
     f.close()
 
