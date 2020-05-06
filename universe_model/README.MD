@@ -13,4 +13,4 @@ medium planet want to go out of solay system.
 
 I udes just Box2D methods and school Newton formula: `F = G(m_1*m_2)/r^2`.
 
-![Alt text](//solar_system.png/600x400 "It's beautiful!")
+![](//solar_system.png/600x400)
